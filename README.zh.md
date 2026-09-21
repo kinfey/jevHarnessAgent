@@ -2,6 +2,8 @@
 
 [English](README.md) | **简体中文**
 
+![arch](./arch/arch.png)
+
 本项目比较两种 Agent Harness：
 
 - **传统 Harness**：GitHub Copilot Python SDK 配合 `gpt-6-astra` 理解需求、选择工具，并通过 Agent loop 调用麦当劳中国 MCP。

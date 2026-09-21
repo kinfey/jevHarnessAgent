@@ -2,6 +2,8 @@
 
 **English** | [简体中文](README.zh.md)
 
+![arch](./arch/arch.png)
+
 This project compares two agent harnesses:
 
 - **Traditional Harness**: GitHub Copilot Python SDK with `gpt-6-astra` interprets the request, selects tools, and calls McDonald's China MCP through an agent loop.
