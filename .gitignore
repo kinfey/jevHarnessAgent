@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+benchmark-results/
+.copilot-runtime/

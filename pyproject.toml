@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jev-harness-agent-demo"
+version = "0.1.0"
+description = "Jev and traditional Harness Agent comparison over McDonald's China MCP"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "github-copilot-sdk>=0.1.0",
+  "pydantic>=2.12.0",
+  "python-dotenv>=1.0.0",
+  "typesafe-sdk>=0.5.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0"]
+
+[project.scripts]
+harness-agent = "harness_agent.cli:main"
+harness-dashboard = "harness_agent.web:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/harness_agent"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

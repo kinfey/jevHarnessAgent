@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harness Agent 對比餐牌</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <script>document.documentElement.setAttribute("data-theme", "light");</script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    button, textarea { font: inherit; }
+    .top-nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 max(24px, calc((100% - 1440px) / 2));
+      background: var(--cp-surface);
+      border-bottom: 1px solid var(--cp-border);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; }
+    .brand-mark {
+      width: 46px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 0 0 18px 18px;
+      background: var(--cp-warning);
+      color: var(--cp-text);
+      font-size: 25px;
+      font-weight: 900;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .language-select {
+      min-height: 42px;
+      padding: 0 36px 0 12px;
+      border: 1px solid var(--cp-border-strong);
+      border-radius: .625rem;
+      color: var(--cp-text);
+      background: var(--cp-surface);
+      font: inherit;
+      font-weight: 700;
+    }
+    .hero {
+      border-bottom: 8px solid var(--cp-accent);
+      background: var(--cp-warning);
+      color: var(--cp-text);
+      padding: 56px 24px 64px;
+    }
+    .hero-inner, main { width: min(1440px, calc(100% - 32px)); margin: 0 auto; }
+    .eyebrow { font-size: 13px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 12px 0 18px; font-size: clamp(40px, 6vw, 76px); line-height: .94; max-width: 1000px; letter-spacing: -.045em; font-weight: 900; }
+    .hero p { margin: 0; max-width: 780px; font-size: 18px; line-height: 1.55; font-weight: 600; }
+    main { padding: 40px 0 56px; }
+    .order-bar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 16px;
+      background: var(--cp-surface);
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      box-shadow: none;
+    }
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      color: var(--cp-text);
+      background: var(--cp-bg-elevated);
+      border: 1px solid var(--cp-border-strong);
+      border-radius: .625rem;
+      padding: 12px;
+      line-height: 1.5;
+    }
+    .run-button {
+      min-width: 180px;
+      border: 0;
+      border-radius: .625rem;
+      padding: 0 22px;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .run-button:hover { outline: 3px solid var(--cp-highlight); }
+    .run-button:disabled { opacity: .55; cursor: wait; }
+    .status {
+      display: none;
+      margin: 16px 0;
+      padding: 12px 16px;
+      border-left: 5px solid var(--cp-warning);
+      background: var(--cp-surface);
+      border-radius: .625rem;
+    }
+    .status.show { display: block; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .metric, .agent-card {
+      background: var(--cp-surface);
+      border: 1px solid var(--cp-border);
+      box-shadow: none;
+    }
+    .metric { padding: 14px; border-radius: .625rem; }
+    .metric small { color: var(--cp-text-muted); display: block; }
+    .metric strong { display: block; margin-top: 4px; font-size: 24px; }
+    .comparison {
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) minmax(520px, 1fr);
+      gap: 16px;
+      overflow-x: auto;
+      align-items: start;
+    }
+    .agent-card { border-radius: 16px; overflow: hidden; min-width: 0; }
+    .agent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 5px solid var(--cp-warning);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+    }
+    .agent-header h2 { margin: 0; font-size: 22px; }
+    .badge { padding: 4px 9px; border-radius: 999px; background: var(--cp-warning); color: var(--cp-text); font-size: 12px; font-weight: 800; }
+    .badge.live::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--cp-success);
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse { from { opacity: .35; } to { opacity: 1; } }
+    .agent-body { padding: 16px; }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .kpi { padding: 10px; border-radius: .625rem; background: var(--cp-surface-soft); }
+    .kpi span { display: block; color: var(--cp-text-muted); font-size: 12px; }
+    .kpi strong { font-size: 18px; }
+    details { border-top: 1px solid var(--cp-border); padding: 12px 0; }
+    summary { cursor: pointer; font-weight: 800; }
+    ol { margin: 10px 0 0; padding-left: 24px; }
+    li { margin: 7px 0; color: var(--cp-text-soft); }
+    pre {
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      padding: 12px;
+      border: 1px solid var(--cp-border);
+      border-radius: .625rem;
+      background: var(--cp-bg-elevated);
+      color: var(--cp-text);
+      font-family: Consolas, "Courier New", Courier, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .result { white-space: pre-wrap; line-height: 1.55; color: var(--cp-text-soft); }
+    .console {
+      height: 420px;
+      overflow: auto;
+      padding: 12px;
+      border-bottom: 1px solid var(--cp-border);
+      background: var(--cp-bg-elevated);
+      font-family: Consolas, "Courier New", Courier, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      scroll-behavior: smooth;
+    }
+    .console-line {
+      display: grid;
+      grid-template-columns: 76px 84px 1fr;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px dotted var(--cp-border);
+    }
+    .console-time { color: var(--cp-text-muted); }
+    .console-kind { color: var(--cp-warning); font-weight: 800; text-transform: uppercase; }
+    .console-message { overflow-wrap: anywhere; }
+    .console-line[data-kind="complete"] .console-kind,
+    .console-line[data-kind="usage"] .console-kind { color: var(--cp-success); }
+    .console-line[data-kind="error"] .console-kind { color: var(--cp-danger); }
+    .result-panel { padding: 0 16px 16px; }
+    .error { color: var(--cp-danger); font-weight: 700; }
+    .winner { color: var(--cp-success); }
+    .empty { padding: 48px 16px; text-align: center; color: var(--cp-text-muted); }
+    @media (max-width: 960px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .top-nav { padding: 0 16px; }
+      .brand span:last-child { display: none; }
+      .order-bar { grid-template-columns: 1fr; }
+      .run-button { min-height: 52px; }
+      .summary, .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="brand">
+      <span class="brand-mark">H</span>
+      <span id="brand-text">Harness Menu Lab</span>
+    </div>
+    <div class="nav-actions">
+      <label for="language" id="language-label">語言</label>
+      <select class="language-select" id="language">
+        <option value="zh-TW">繁體中文</option>
+        <option value="zh-CN">简体中文</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </nav>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow" id="eyebrow">System One vs Agent Loop</div>
+      <h1 id="hero-title">Harness Agent<br>雙線點餐對比</h1>
+      <p id="hero-copy">同一份餐點、同一個 MCP、同一個 GPT-6-astra。比較 Jev 型別化控制平面與傳統 Agent 上下文的速度、工具回合和 Token。</p>
+    </div>
+  </header>
+  <main>
+    <section class="order-bar">
+      <textarea id="request">我要一份板燒雞腿堡套餐，中杯可樂，到店取餐。位置是廣州市海珠區寶崗大道。先查附近門店、優惠並試算，不要真正下單。</textarea>
+      <button class="run-button" id="run">同時開始對比</button>
+    </section>
+    <div class="status" id="status">兩條 Harness 正在同時執行。通常需要 1–3 分鐘，頁面請保持開啟。</div>
+    <section class="summary" id="summary" hidden></section>
+    <section class="comparison" id="comparison">
+      <article class="agent-card" id="jev-card">
+        <header class="agent-header"><div><h2>Jev Harness</h2><small id="jev-subtitle">Jev → Python gate → GPT-6-astra</small></div><span class="badge">READY</span></header>
+        <div class="console" id="jev-console"><div class="empty" data-waiting>等待同時執行…</div></div>
+        <div class="result-panel" id="jev-result"></div>
+      </article>
+      <article class="agent-card" id="traditional-card">
+        <header class="agent-header"><div><h2 id="traditional-title">傳統 Harness</h2><small id="traditional-subtitle">Raw context → GPT-6-astra agent loop</small></div><span class="badge">READY</span></header>
+        <div class="console" id="traditional-console"><div class="empty" data-waiting>等待同時執行…</div></div>
+        <div class="result-panel" id="traditional-result"></div>
+      </article>
+    </section>
+  </main>
+  <script>
+    const translations = {
+      "zh-TW": {
+        brand: "Harness Menu Lab", language: "語言",
+        eyebrow: "System One 對比 Agent Loop",
+        title: "Harness Agent<br>雙線點餐對比",
+        copy: "同一份餐點、同一個 MCP、同一個 GPT-6-astra。即時比較 Jev 型別化控制平面與傳統 Agent 上下文的速度、工具回合和 Token。",
+        request: "我要一份板燒雞腿堡套餐，中杯可樂，到店取餐。位置是廣州市海珠區寶崗大道。先查附近門店、優惠並試算，不要真正下單。",
+        run: "同時開始對比", rerun: "再次同時對比", running: "執行中…",
+        waiting: "等待同時執行…", traditional: "傳統 Harness",
+        jevSubtitle: "Jev → Python gate → GPT-6-astra",
+        traditionalSubtitle: "原始上下文 → GPT-6-astra Agent loop",
+        statusRunning: "Jev 與傳統 Harness 正在同時執行。通常需要 1–3 分鐘，頁面請保持開啟。",
+        statusDone: "對比完成。兩條流程均為 quote_only，不會建立訂單。",
+        statusError: "執行失敗", startJev: "啟動 Jev Harness…", startTraditional: "啟動傳統 Harness…",
+        completed: "完成", calls: "次", elapsed: "全鏈路時間", tools: "MCP 工具執行",
+        steps: "執行步驟", structured: "Jev 結構化 JSON", context: "Agent 上下文",
+        tokens: "Token 明細", events: "SDK 事件", result: "試算結果",
+        relativeSpeed: "Jev 相對速度", toolRounds: "工具回合", seconds: "秒"
+      },
+      "zh-CN": {
+        brand: "Harness Menu Lab", language: "语言",
+        eyebrow: "System One 对比 Agent Loop",
+        title: "Harness Agent<br>双线点餐对比",
+        copy: "同一份餐点、同一个 MCP、同一个 GPT-6-astra。实时比较 Jev 类型化控制平面与传统 Agent 上下文的速度、工具轮次和 Token。",
+        request: "我要一份板烧鸡腿堡套餐，中杯可乐，到店取餐。位置是广州市海珠区宝岗大道。先查附近门店、优惠并试算，不要真正下单。",
+        run: "同时开始对比", rerun: "再次同时对比", running: "执行中…",
+        waiting: "等待同时执行…", traditional: "传统 Harness",
+        jevSubtitle: "Jev → Python 闸门 → GPT-6-astra",
+        traditionalSubtitle: "原始上下文 → GPT-6-astra Agent loop",
+        statusRunning: "Jev 与传统 Harness 正在同时执行。通常需要 1–3 分钟，请保持页面开启。",
+        statusDone: "对比完成。两条流程均为 quote_only，不会创建订单。",
+        statusError: "执行失败", startJev: "启动 Jev Harness…", startTraditional: "启动传统 Harness…",
+        completed: "完成", calls: "次", elapsed: "全链路时间", tools: "MCP 工具执行",
+        steps: "执行步骤", structured: "Jev 结构化 JSON", context: "Agent 上下文",
+        tokens: "Token 明细", events: "SDK 事件", result: "试算结果",
+        relativeSpeed: "Jev 相对速度", toolRounds: "工具轮次", seconds: "秒"
+      },
+      "en": {
+        brand: "Harness Menu Lab", language: "Language",
+        eyebrow: "System One vs Agent Loop",
+        title: "Harness Agent<br>Side-by-Side Ordering",
+        copy: "The same meal, MCP server, and GPT-6-astra model. Compare Jev's typed control plane with a traditional agent context in real time across latency, tool rounds, and tokens.",
+        request: "I want one grilled chicken burger combo with a medium Coke for pickup near Baogang Avenue, Haizhu District, Guangzhou. Find a nearby store, check offers, and quote the price. Do not place an order.",
+        run: "Run both harnesses", rerun: "Run comparison again", running: "Running…",
+        waiting: "Waiting to run…", traditional: "Traditional Harness",
+        jevSubtitle: "Jev → Python gate → GPT-6-astra",
+        traditionalSubtitle: "Raw context → GPT-6-astra agent loop",
+        statusRunning: "Jev and the traditional Harness are running concurrently. This normally takes 1–3 minutes.",
+        statusDone: "Comparison complete. Both paths are quote_only and no order was created.",
+        statusError: "Execution failed", startJev: "Starting Jev Harness…", startTraditional: "Starting traditional Harness…",
+        completed: "Completed", calls: "calls", elapsed: "End-to-end time", tools: "MCP tool executions",
+        steps: "Execution steps", structured: "Jev structured JSON", context: "Agent context",
+        tokens: "Token details", events: "SDK events", result: "Quote result",
+        relativeSpeed: "Jev relative speed", toolRounds: "Tool rounds", seconds: "sec"
+      }
+    };
+
+    const runButton = document.querySelector("#run");
+    const requestInput = document.querySelector("#request");
+    const statusBox = document.querySelector("#status");
+    const summary = document.querySelector("#summary");
+    const languageSelect = document.querySelector("#language");
+    const state = { jev: null, traditional: null };
+    let currentLanguage = "zh-TW";
+
+    const t = key => translations[currentLanguage][key];
+    const localeName = () => currentLanguage === "en" ? "en-US" : currentLanguage;
+    const number = value => new Intl.NumberFormat(localeName()).format(value || 0);
+    const seconds = value => `${Number(value || 0).toFixed(2)} ${t("seconds")}`;
+    const escapeHtml = value => String(value ?? "")
+      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    const pretty = value => JSON.stringify(value, null, 2);
+
+    function applyLanguage(language, replaceRequest = true) {
+      const previousDefault = translations[currentLanguage].request;
+      currentLanguage = language;
+      document.documentElement.lang = language;
+      document.querySelector("#brand-text").textContent = t("brand");
+      document.querySelector("#language-label").textContent = t("language");
+      document.querySelector("#eyebrow").textContent = t("eyebrow");
+      document.querySelector("#hero-title").innerHTML = t("title");
+      document.querySelector("#hero-copy").textContent = t("copy");
+      document.querySelector("#traditional-title").textContent = t("traditional");
+      document.querySelector("#jev-subtitle").textContent = t("jevSubtitle");
+      document.querySelector("#traditional-subtitle").textContent = t("traditionalSubtitle");
+      if (!runButton.disabled) runButton.textContent = state.jev || state.traditional ? t("rerun") : t("run");
+      document.querySelectorAll("[data-waiting]").forEach(node => node.textContent = t("waiting"));
+      if (replaceRequest && (!requestInput.value.trim() || requestInput.value === previousDefault)) {
+        requestInput.value = t("request");
+      }
+      if (state.jev || state.traditional) {
+        if (state.jev) document.querySelector("#jev-result").innerHTML = resultDetails(state.jev, true);
+        if (state.traditional) document.querySelector("#traditional-result").innerHTML = resultDetails(state.traditional, false);
+        renderSummary();
+      }
+    }
+
+    function totals(result) {
+      if (!result || result.error) return { input: 0, output: 0, cache: 0 };
+      const usage = result.token_usage || {};
+      if (usage.combined_reported) {
+        return {
+          input: usage.combined_reported.input_tokens,
+          output: usage.combined_reported.output_tokens,
+          cache: usage.copilot?.totals?.cache_read_tokens || 0
+        };
+      }
+      return {
+        input: usage.copilot?.totals?.input_tokens || 0,
+        output: usage.copilot?.totals?.output_tokens || 0,
+        cache: usage.copilot?.totals?.cache_read_tokens || 0
+      };
+    }
+
+    function resultDetails(result, isJev) {
+      if (result.error) return `<div class="error">${escapeHtml(result.error)}</div>`;
+      const token = totals(result);
+      const structured = isJev
+        ? `<details open><summary>${t("structured")}</summary><pre>${escapeHtml(pretty(result.jev_decisions))}</pre></details>`
+        : "";
+      return `
+          <div class="kpis">
+            <div class="kpi"><span>${t("elapsed")}</span><strong>${seconds(result.elapsed_seconds)}</strong></div>
+            <div class="kpi"><span>${t("tools")}</span><strong>${number(result.tool_events)}</strong></div>
+            <div class="kpi"><span>Output tokens</span><strong>${number(token.output)}</strong></div>
+          </div>
+          <details open><summary>${t("steps")}</summary><ol>${(result.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join("")}</ol></details>
+          ${structured}
+          <details><summary>${t("context")}</summary><pre>${escapeHtml(pretty(result.agent_context))}</pre></details>
+          <details><summary>${t("tokens")}</summary><pre>${escapeHtml(pretty(result.token_usage))}</pre></details>
+          <details><summary>${t("events")}</summary><pre>${escapeHtml(pretty(result.event_types))}</pre></details>
+          <details open><summary>${t("result")}</summary><div class="result">${escapeHtml(result.response)}</div></details>`;
+    }
+
+    function renderSummary() {
+      const jev = state.jev;
+      const traditional = state.traditional;
+      if (!jev || !traditional || jev.error || traditional.error) return;
+      const jt = totals(jev);
+      const tt = totals(traditional);
+      const timeSaving = traditional.elapsed_seconds
+        ? ((traditional.elapsed_seconds - jev.elapsed_seconds) / traditional.elapsed_seconds) * 100
+        : 0;
+      summary.hidden = false;
+      summary.innerHTML = `
+        <div class="metric"><small>${t("relativeSpeed")}</small><strong class="${timeSaving > 0 ? "winner" : ""}">${timeSaving.toFixed(1)}%</strong></div>
+        <div class="metric"><small>${t("toolRounds")}</small><strong>${number(jev.tool_events)} vs ${number(traditional.tool_events)}</strong></div>
+        <div class="metric"><small>Input tokens</small><strong>${number(jt.input)} vs ${number(tt.input)}</strong></div>
+        <div class="metric"><small>Output tokens</small><strong>${number(jt.output)} vs ${number(tt.output)}</strong></div>`;
+    }
+
+    function resetConsole(engine) {
+      document.querySelector(`#${engine}-console`).innerHTML = "";
+      document.querySelector(`#${engine}-result`).innerHTML = "";
+      const badge = document.querySelector(`#${engine}-card .badge`);
+      badge.textContent = "LIVE";
+      badge.classList.add("live");
+    }
+
+    function appendLog(engine, event) {
+      const consoleBox = document.querySelector(`#${engine}-console`);
+      const line = document.createElement("div");
+      line.className = "console-line";
+      line.dataset.kind = event.kind || "event";
+      const time = event.timestamp
+        ? new Date(event.timestamp * 1000).toLocaleTimeString(localeName(), { hour12: false })
+        : new Date().toLocaleTimeString(localeName(), { hour12: false });
+      line.innerHTML = `<span class="console-time">${escapeHtml(time)}</span>
+        <span class="console-kind">${escapeHtml(event.kind || "event")}</span>
+        <span class="console-message">${escapeHtml(event.message || "")}</span>`;
+      consoleBox.appendChild(line);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function finishEngine(engine, result) {
+      state[engine] = result;
+      const badge = document.querySelector(`#${engine}-card .badge`);
+      badge.textContent = result.error ? "ERROR" : "DONE";
+      badge.classList.remove("live");
+      appendLog(engine, {
+        kind: result.error ? "error" : "complete",
+        message: result.error || `${t("completed")}: ${seconds(result.elapsed_seconds)}, MCP ${number(result.tool_events)} ${t("calls")}`
+      });
+      document.querySelector(`#${engine}-result`).innerHTML = resultDetails(result, engine === "jev");
+      renderSummary();
+    }
+
+    runButton.addEventListener("click", async () => {
+      runButton.disabled = true;
+      runButton.textContent = t("running");
+      statusBox.classList.add("show");
+      statusBox.textContent = t("statusRunning");
+      summary.hidden = true;
+      state.jev = null;
+      state.traditional = null;
+      resetConsole("jev");
+      resetConsole("traditional");
+      appendLog("jev", { kind: "start", message: t("startJev") });
+      appendLog("traditional", { kind: "start", message: t("startTraditional") });
+      try {
+        const response = await fetch("/api/compare-stream", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ request: requestInput.value, language: currentLanguage })
+        });
+        if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}`);
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          const { value, done } = await reader.read();
+          buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+          for (const raw of lines) {
+            if (!raw.trim()) continue;
+            const event = JSON.parse(raw);
+            if (event.type === "progress") appendLog(event.engine, event);
+            if (event.type === "result") finishEngine(event.engine, event.result);
+            if (event.type === "fatal") throw new Error(event.error);
+          }
+          if (done) break;
+        }
+        statusBox.textContent = t("statusDone");
+      } catch (error) {
+        statusBox.textContent = `${t("statusError")}: ${error.message}`;
+        for (const engine of ["jev", "traditional"]) {
+          if (!state[engine]) appendLog(engine, { kind: "error", message: error.message });
+        }
+      } finally {
+        runButton.disabled = false;
+        runButton.textContent = t("rerun");
+      }
+    });
+
+    languageSelect.addEventListener("change", () => applyLanguage(languageSelect.value));
+    const browserLanguage = navigator.language.toLowerCase();
+    currentLanguage = browserLanguage.startsWith("zh-cn") ? "zh-CN"
+      : browserLanguage.startsWith("en") ? "en" : "zh-TW";
+    languageSelect.value = currentLanguage;
+    applyLanguage(currentLanguage, false);
+    requestInput.value = t("request");
+  </script>
+</body>
+</html>
